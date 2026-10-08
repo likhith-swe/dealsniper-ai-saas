@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         {
           ok: true,
           provider: "razorpay",
-          checkoutUrl: "https://razorpay.me/@likhiths",
+          checkoutUrl: "https://razorpay.me/@NEXVRA",
           amountMinor: pricing.inrMinor,
           currency: "INR",
           mode: "live",
