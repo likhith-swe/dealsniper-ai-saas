@@ -57,6 +57,20 @@ export async function POST(request: NextRequest) {
   const stripe = stripeCredentials();
 
   try {
+    if (currency === "INR" && !razorpay) {
+      return Response.json(
+        {
+          ok: true,
+          provider: "razorpay",
+          checkoutUrl: "https://razorpay.me/@likhiths",
+          amountMinor: pricing.inrMinor,
+          currency: "INR",
+          mode: "live",
+        },
+        { headers: rateLimitHeaders(decision) },
+      );
+    }
+
     if (razorpay) {
       const plans = razorpayPlanIds();
       const planId = currency === "USD" ? plans.usd : plans.inr;
