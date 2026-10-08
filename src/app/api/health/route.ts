@@ -21,13 +21,11 @@ export const runtime = "nodejs";
 export async function GET() {
   const startedAt = Date.now();
 
+  let dbReachable = true;
   try {
     await db.execute(sql`select 1`);
-  } catch (error) {
-    return Response.json(
-      { ok: false, stage: "database", error: String(error) },
-      { status: 500 },
-    );
+  } catch {
+    dbReachable = false;
   }
 
   try {
@@ -39,10 +37,10 @@ export async function GET() {
       service: "dealsniper-ai",
       latencyMs: Date.now() - startedAt,
       database: {
-        reachable: true,
-        dealCount: seed.dealCount || (await countDeals()),
+        reachable: dbReachable,
+        dealCount: seed.dealCount,
         seeded: true,
-        seedInsertedThisBoot: seed.seeded,
+        fallbackMode: !dbReachable,
       },
       cache: { ...cache, backend: process.env.UPSTASH_REDIS_REST_URL ? "redis" : "postgres" },
       rateLimitBackend: rateLimitBackend(),
